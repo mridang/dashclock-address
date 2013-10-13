@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="wireless">Connected via wireless network</string>
+    <string name="external">Public: %1$s</string>
+    <string name="extension_name">Address</string>
+    <string name="application_name">Dashclock Address Extension</string>
+    <string name="extension_info">Displays information about the device\'s network address.</string>
+    <string name="internal">Private: %1$s</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="cellular">Connected via cellular network</string>
+
+</resources>
