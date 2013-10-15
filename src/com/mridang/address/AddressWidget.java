@@ -124,7 +124,7 @@ public class AddressWidget extends DashClockExtension {
 
 					}
 
-				}.get();				
+				}.execute().get();				
 
 				String strAddress = docPage != null ? docPage.body().text() : "Unknown";
 
