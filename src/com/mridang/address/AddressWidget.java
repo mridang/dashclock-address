@@ -1,6 +1,8 @@
 package com.mridang.address;
 
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -94,7 +96,7 @@ public class AddressWidget extends DashClockExtension {
 	@Override
 	protected void onUpdateData(int arg0) {
 
-		setUpdateWhenScreenOn(true);
+		setUpdateWhenScreenOn(false);
 
 		Log.d("AddressWidget", "Calculating the phone's address");
 		final ExtensionData edtInformation = new ExtensionData();
@@ -114,12 +116,27 @@ public class AddressWidget extends DashClockExtension {
 					protected Document doInBackground(Void... params) {
 
 						Log.d("AddressWidget", "Fetching external address since the device has connectivity");
+
 						try {
 
 							return Jsoup.connect("http://api.exip.org/?call=ip").get();
 
+						} catch (UnknownHostException e) {
+							Log.w("AddressWidget", "Unable to get the external address", e);
+							setUpdateWhenScreenOn(true);
+							return null;
+						} catch (SocketException e) {
+							Log.w("AddressWidget", "Unable to get the external address", e);
+							setUpdateWhenScreenOn(true);
+							return null;
 						} catch (IOException e) {
-							throw new RuntimeException(e);
+							Log.w("AddressWidget", "Unable to get the external address", e);
+							setUpdateWhenScreenOn(true);
+							return null;
+						} catch (Exception e) {
+							Log.w("AddressWidget", "Unable to get the external address", e);
+							BugSenseHandler.sendException(e);
+							return null;
 						}
 
 					}
