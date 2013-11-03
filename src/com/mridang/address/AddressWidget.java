@@ -162,7 +162,7 @@ public class AddressWidget extends DashClockExtension {
 					edtInformation.expandedBody(strAddress);
 				}
 
-				Log.d("AddressWidget", "External IP: " + docPage.body().text());
+				Log.d("AddressWidget", "External IP: " + strAddress);
 
 			} else {
 
