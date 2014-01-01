@@ -3,6 +3,7 @@ package com.mridang.address;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,8 +12,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -84,7 +89,7 @@ public class AddressWidget extends DashClockExtension {
 
 		super.onCreate();
 		Log.d("AddressWidget", "Created");
-		BugSenseHandler.initAndStartSession(this, "55a4b929");
+		BugSenseHandler.initAndStartSession(this, getString(R.string.bugsense));
 
 	}
 
@@ -93,14 +98,13 @@ public class AddressWidget extends DashClockExtension {
 	 * com.google.android.apps.dashclock.api.DashClockExtension#onUpdateData
 	 * (int)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onUpdateData(int arg0) {
 
-		setUpdateWhenScreenOn(false);
-
 		Log.d("AddressWidget", "Calculating the phone's address");
 		final ExtensionData edtInformation = new ExtensionData();
-		edtInformation.visible(false);
+		setUpdateWhenScreenOn(false);
 
 		try {
 
@@ -160,6 +164,7 @@ public class AddressWidget extends DashClockExtension {
 
 					edtInformation.expandedTitle(getString(R.string.cellular));
 					edtInformation.expandedBody(strAddress);
+
 				}
 
 				Log.d("AddressWidget", "External IP: " + strAddress);
@@ -168,14 +173,52 @@ public class AddressWidget extends DashClockExtension {
 
 				Log.d("AddressWidget", "The device doesn't have connectivity");
 
-				edtInformation.expandedTitle("Disconnected");
-				edtInformation.expandedBody("No internet access");
+				edtInformation.expandedTitle(getString(R.string.disconnected));
+				edtInformation.expandedBody(getString(R.string.no_connectivity));
 
 			}
+			
+			edtInformation.visible(true);
+			
+			if (new Random().nextInt(5) == 0) {
 
-			edtInformation.visible(true); 
+				PackageManager mgrPackages = getApplicationContext().getPackageManager();
+
+				try {
+
+					mgrPackages.getPackageInfo("com.mridang.donate", PackageManager.GET_META_DATA);
+
+				} catch (NameNotFoundException e) {
+
+					Integer intExtensions = 0;
+				    Intent ittFilter = new Intent("com.google.android.apps.dashclock.Extension");
+				    String strPackage;
+
+				    for (ResolveInfo info : mgrPackages.queryIntentServices(ittFilter, 0)) {
+
+				    	strPackage = info.serviceInfo.applicationInfo.packageName;
+						intExtensions = intExtensions + (strPackage.startsWith("com.mridang.") ? 1 : 0); 
+
+					}
+
+					if (intExtensions > 1) {
+
+						edtInformation.visible(true);
+						edtInformation.clickIntent(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://details?id=com.mridang.donate")));
+						edtInformation.expandedTitle("Please consider a one time purchase to unlock.");
+						edtInformation.expandedBody("Thank you for using " + intExtensions + " extensions of mine. Click this to make a one-time purchase or use just one extension to make this disappear.");
+						setUpdateWhenScreenOn(true);
+
+					}
+
+				}
+
+			} else {
+				setUpdateWhenScreenOn(false);
+			}
 
 		} catch (Exception e) {
+			edtInformation.visible(false);
 			Log.e("AddressWidget", "Encountered an error", e);
 			BugSenseHandler.sendException(e);
 		}

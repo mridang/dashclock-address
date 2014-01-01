@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mridang.address"
-    android:versionCode="5"
-    android:versionName="0.5" >
+    android:versionCode="6"
+    android:versionName="0.6" >
 
     <uses-sdk
         android:minSdkVersion="17"
@@ -27,7 +27,10 @@
 
             <meta-data
                 android:name="protocolVersion"
-                android:value="1" />
+                android:value="2" />
+            <meta-data
+                android:name="worldReadable"
+                android:value="true" />
             <meta-data
                 android:name="description"
                 android:value="@string/extension_info" />
