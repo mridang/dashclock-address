@@ -123,7 +123,7 @@ public class AddressWidget extends DashClockExtension {
 
 						try {
 
-							return Jsoup.connect("http://api.exip.org/?call=ip").get();
+							return Jsoup.connect("http://whatismyip.akamai.com/").get();
 
 						} catch (UnknownHostException e) {
 							Log.w("AddressWidget", "Unable to get the external address", e);
