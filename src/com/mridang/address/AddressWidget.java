@@ -147,7 +147,7 @@ public class AddressWidget extends DashClockExtension {
 
 				}.execute().get();				
 
-				String strAddress = docPage != null ? docPage.body().text() : "Unknown";
+				String strAddress = docPage != null ? docPage.text() : "Unknown";
 
 				Log.d("AddressWidget", "Checking if is connvected via Wifi");
 				if (nifNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -177,9 +177,9 @@ public class AddressWidget extends DashClockExtension {
 				edtInformation.expandedBody(getString(R.string.no_connectivity));
 
 			}
-			
+
 			edtInformation.visible(true);
-			
+
 			if (new Random().nextInt(5) == 0) {
 
 				PackageManager mgrPackages = getApplicationContext().getPackageManager();
@@ -191,12 +191,12 @@ public class AddressWidget extends DashClockExtension {
 				} catch (NameNotFoundException e) {
 
 					Integer intExtensions = 0;
-				    Intent ittFilter = new Intent("com.google.android.apps.dashclock.Extension");
-				    String strPackage;
+					Intent ittFilter = new Intent("com.google.android.apps.dashclock.Extension");
+					String strPackage;
 
-				    for (ResolveInfo info : mgrPackages.queryIntentServices(ittFilter, 0)) {
+					for (ResolveInfo info : mgrPackages.queryIntentServices(ittFilter, 0)) {
 
-				    	strPackage = info.serviceInfo.applicationInfo.packageName;
+						strPackage = info.serviceInfo.applicationInfo.packageName;
 						intExtensions = intExtensions + (strPackage.startsWith("com.mridang.") ? 1 : 0); 
 
 					}
