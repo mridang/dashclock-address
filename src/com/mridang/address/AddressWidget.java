@@ -5,6 +5,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Random;
 
+import org.acra.ACRA;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -12,6 +13,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
@@ -24,7 +26,6 @@ import android.os.AsyncTask;
 import android.text.format.Formatter;
 import android.util.Log;
 
-import com.bugsense.trace.BugSenseHandler;
 import com.google.android.apps.dashclock.api.DashClockExtension;
 import com.google.android.apps.dashclock.api.ExtensionData;
 
@@ -42,7 +43,9 @@ public class AddressWidget extends DashClockExtension {
 	private class ConnectivityReceiver extends BroadcastReceiver {
 
 		/*
-		 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
 		 */
 		@Override
 		public void onReceive(Context ctxContext, Intent ittIntent) {
@@ -54,7 +57,9 @@ public class AddressWidget extends DashClockExtension {
 	}
 
 	/*
-	 * @see com.google.android.apps.dashclock.api.DashClockExtension#onInitialize(boolean)
+	 * @see
+	 * com.google.android.apps.dashclock.api.DashClockExtension#onInitialize
+	 * (boolean)
 	 */
 	@Override
 	protected void onInitialize(boolean booReconnect) {
@@ -89,7 +94,7 @@ public class AddressWidget extends DashClockExtension {
 
 		super.onCreate();
 		Log.d("AddressWidget", "Created");
-		BugSenseHandler.initAndStartSession(this, getString(R.string.bugsense));
+		ACRA.init(new AcraApplication(getApplicationContext()));
 
 	}
 
@@ -98,9 +103,8 @@ public class AddressWidget extends DashClockExtension {
 	 * com.google.android.apps.dashclock.api.DashClockExtension#onUpdateData
 	 * (int)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
-	protected void onUpdateData(int arg0) {
+	protected void onUpdateData(int intReason) {
 
 		Log.d("AddressWidget", "Calculating the phone's address");
 		final ExtensionData edtInformation = new ExtensionData();
@@ -139,13 +143,13 @@ public class AddressWidget extends DashClockExtension {
 							return null;
 						} catch (Exception e) {
 							Log.w("AddressWidget", "Unable to get the external address", e);
-							BugSenseHandler.sendException(e);
+							ACRA.getErrorReporter().handleSilentException(e);
 							return null;
 						}
 
 					}
 
-				}.execute().get();				
+				}.execute().get();
 
 				String strAddress = docPage != null ? docPage.text() : "Unknown";
 
@@ -156,7 +160,8 @@ public class AddressWidget extends DashClockExtension {
 
 					edtInformation.expandedTitle(getString(R.string.wireless));
 					WifiInfo wifWireless = ((WifiManager) getSystemService(WIFI_SERVICE)).getConnectionInfo();
-					edtInformation.expandedBody(getString(R.string.external, strAddress) + "\n" + getString(R.string.internal, Formatter.formatIpAddress(wifWireless.getIpAddress())));
+					edtInformation.expandedBody(getString(R.string.external, strAddress) + "\n"
+							+ getString(R.string.internal, Formatter.formatIpAddress(wifWireless.getIpAddress())));
 
 				} else {
 
@@ -180,7 +185,7 @@ public class AddressWidget extends DashClockExtension {
 
 			edtInformation.visible(true);
 
-			if (new Random().nextInt(5) == 0) {
+			if (new Random().nextInt(5) == 0 && !(0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE))) {
 
 				PackageManager mgrPackages = getApplicationContext().getPackageManager();
 
@@ -197,16 +202,20 @@ public class AddressWidget extends DashClockExtension {
 					for (ResolveInfo info : mgrPackages.queryIntentServices(ittFilter, 0)) {
 
 						strPackage = info.serviceInfo.applicationInfo.packageName;
-						intExtensions = intExtensions + (strPackage.startsWith("com.mridang.") ? 1 : 0); 
+						intExtensions = intExtensions + (strPackage.startsWith("com.mridang.") ? 1 : 0);
 
 					}
 
 					if (intExtensions > 1) {
 
 						edtInformation.visible(true);
-						edtInformation.clickIntent(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://details?id=com.mridang.donate")));
+						edtInformation.clickIntent(new Intent(Intent.ACTION_VIEW).setData(Uri
+								.parse("market://details?id=com.mridang.donate")));
 						edtInformation.expandedTitle("Please consider a one time purchase to unlock.");
-						edtInformation.expandedBody("Thank you for using " + intExtensions + " extensions of mine. Click this to make a one-time purchase or use just one extension to make this disappear.");
+						edtInformation
+								.expandedBody("Thank you for using "
+										+ intExtensions
+										+ " extensions of mine. Click this to make a one-time purchase or use just one extension to make this disappear.");
 						setUpdateWhenScreenOn(true);
 
 					}
@@ -220,7 +229,7 @@ public class AddressWidget extends DashClockExtension {
 		} catch (Exception e) {
 			edtInformation.visible(false);
 			Log.e("AddressWidget", "Encountered an error", e);
-			BugSenseHandler.sendException(e);
+			ACRA.getErrorReporter().handleSilentException(e);
 		}
 
 		edtInformation.icon(R.drawable.ic_dashclock);
@@ -250,7 +259,6 @@ public class AddressWidget extends DashClockExtension {
 		}
 
 		Log.d("AddressWidget", "Destroyed");
-		BugSenseHandler.closeSession(this);
 
 	}
 
