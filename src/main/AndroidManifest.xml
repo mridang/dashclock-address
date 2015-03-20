@@ -1,11 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mridang.address"
-    android:versionCode="10"
-    android:versionName="1.0" >
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="14" />
+    android:versionCode="11"
+    android:versionName="1.1">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,12 +11,12 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/application_name"
-        android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
+        android:theme="@style/ExtensionTheme">
         <service
             android:name="com.mridang.address.AddressWidget"
             android:icon="@drawable/ic_dashclock"
             android:label="@string/extension_name"
-            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA" >
+            android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
             <intent-filter>
                 <action android:name="com.google.android.apps.dashclock.Extension" />
             </intent-filter>
