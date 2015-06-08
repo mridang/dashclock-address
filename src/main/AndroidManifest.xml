@@ -1,11 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mridang.address"
-    android:versionCode="11"
-    android:versionName="1.1">
+<manifest package="com.mridang.address"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          android:versionCode="12"
+          android:versionName="1.2">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -18,18 +18,18 @@
             android:label="@string/extension_name"
             android:permission="com.google.android.apps.dashclock.permission.READ_EXTENSION_DATA">
             <intent-filter>
-                <action android:name="com.google.android.apps.dashclock.Extension" />
+                <action android:name="com.google.android.apps.dashclock.Extension"/>
             </intent-filter>
 
             <meta-data
                 android:name="protocolVersion"
-                android:value="2" />
+                android:value="2"/>
             <meta-data
                 android:name="worldReadable"
-                android:value="true" />
+                android:value="true"/>
             <meta-data
                 android:name="description"
-                android:value="@string/extension_info" />
+                android:value="@string/extension_info"/>
         </service>
     </application>
 
